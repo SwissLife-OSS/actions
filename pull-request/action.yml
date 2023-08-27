@@ -1,0 +1,86 @@
+name: 'Pull Request'
+
+description: 'Builds and tests .NET projects'
+
+inputs:
+  sonar_project_key:
+    description: 'Sonar project key'
+    required: true
+  sonar_name:
+    description: 'Sonar project name'
+    required: true
+  pr_number:
+    description: 'Pull request number'
+    required: true
+  pr_source_branch:
+    description: 'Source branch of the pull request'
+    required: true
+  pr_target_branch:
+    description: 'Target branch of the pull request'
+    required: true
+  github_repository:
+    description: 'GitHub repository'
+    required: true
+  extended_sonar_exclusions:
+    description: 'Extended Sonar exclusions'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+  
+    - name: Install dependencies
+      run: sudo apt-get install -y parallel
+      shell: bash
+
+    - name: Restore tools
+      run: dotnet tool restore
+      shell: bash
+
+    - name: SonarScanner Begin
+      run: |
+        dotnet sonarscanner begin /k:"${{ inputs.sonar_project_key }}" /n:"${{ inputs.sonar_name }}" \
+        /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /o:"swisslife" \
+        /d:sonar.cs.opencover.reportsPaths="**/*.opencover.xml" /d:sonar.cs.vstest.reportsPaths="**/*.trx" \
+        /d:sonar.pullrequest.key="${{ inputs.pr_number }}" /d:sonar.pullrequest.branch="${{ inputs.pr_source_branch }}" \
+        /d:sonar.pullrequest.base="${{ inputs.pr_target_branch }}" /d:sonar.pullrequest.provider="github" \
+        /d:sonar.pullrequest.github.repository="${{ inputs.github_repository }}" \
+        /d:sonar.exclusions="${{ vars.SONAR_EXCLUSIONS }}${{ inputs.extended_sonar_exclusions }}"
+      shell: bash
+
+    - name: Build projects
+      run: |
+        run() {
+          echo -e "┌──────────────────────────────────────────────"
+          echo -e "│ \033[0;34mRunning: \$@\033[0m"
+          echo -e "└──────────────────────────────────────────────"
+          "\$@"
+          echo -e "\n"
+        }
+        export -f run
+        find . -name '*.sln' | parallel --jobs 0 'bash -c "run dotnet build {} --configuration Debug"'
+      shell: bash
+
+    - name: Run tests
+      run: |
+        run() {
+          echo -e "┌──────────────────────────────────────────────"
+          echo -e "│ \033[0;34mRunning: \$@\033[0m"
+          echo -e "└──────────────────────────────────────────────"
+          "\$@"
+          echo -e "\n"
+        }
+        export -f run
+        find . -name '*.Tests.csproj' | parallel --jobs 0 'bash -c "run dotnet test {} \
+          --configuration Debug \
+          --no-restore \
+          --no-build \
+          --blame \
+          -p:\"CollectCoverage=true\" \
+          -p:\"Exclude=[xunit.*]*\" \
+          -p:\"CoverletOutputFormat=opencover\""'
+      shell: bash
+
+    - run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      shell: bash
