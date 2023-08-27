@@ -84,5 +84,5 @@ runs:
           -p:\"CoverletOutputFormat=opencover\""'
       shell: bash
 
-    - run: dotnet sonarscanner end /d:sonar.login="${{ input.sonar_token }}"
+    - run: dotnet sonarscanner end /d:sonar.login="${{ inputs.sonar_token }}"
       shell: bash
