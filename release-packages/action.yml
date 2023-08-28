@@ -1,6 +1,6 @@
-name: 'Release'
+name: 'Release Packages'
 
-description: 'Builds packs and pushes .NET projects'
+description: 'Build, Pack and Push'
 
 inputs:
   tag:
@@ -11,8 +11,8 @@ inputs:
     required: true
   enable_push:
     description: 'Enable Nuget push'
-    required: false
-    default: 'no' # TODO: change to yes
+    required: true
+    default: 'no'
 
 runs:
   using: 'composite'
