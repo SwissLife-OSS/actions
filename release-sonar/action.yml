@@ -1,0 +1,60 @@
+name: 'Release Sonar'
+
+description: 'Build, Test and Sonar'
+
+inputs:
+  tag:
+    description: 'The Git tag that triggered this workflow'
+    required: true
+  sonar_token:
+    description: 'Sonar token'
+    required: true
+  sonar_project_key:
+    description: 'Sonar project key'
+    required: true
+  sonar_project_name:
+    description: 'Sonar project name'
+    required: true
+  sonar_exclusions:
+    description: 'Sonar exclusions'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Install dependencies
+      run: sudo apt-get install -y parallel
+      shell: bash
+
+    - name: Set JAVA_HOME to version 17
+      run: |
+        echo "JAVA_HOME=$JAVA_HOME_17_X64" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Restore tools
+      run: dotnet tool restore
+      shell: bash
+
+    - name: SonarScanner Begin
+      run: |
+        dotnet sonarscanner begin /k:"${{ inputs.sonar_project_key }}" /n:"${{ inputs.sonar_name }}" \
+        /d:sonar.login="${{ inputs.sonar_token }}" /d:sonar.host.url="https://sonarcloud.io" /o:"swisslife" \
+        /d:sonar.cs.opencover.reportsPaths="**/*.opencover.xml" /d:sonar.cs.vstest.reportsPaths="**/*.trx" \
+        /v:"${{ inputs.tag }}" /d:sonar.exclusions="${{ inputs.sonar_exclusions }}"
+      shell: bash
+
+    - name: Build projects
+      run: |
+        for sln in $(find . -name '*.sln'); do
+          echo -e "\n\033[0;34mBuilding $sln \033[0m"
+          dotnet build "$sln" -c Debug /p:WarningLevel=0
+        done
+      shell: bash
+
+    - name: Run tests
+      run: find . -name '*.Tests.csproj' | parallel --jobs 0 'echo -e "\n\033[0;34m{}\033[0m\n" && dotnet test {} -c Debug --no-build -p:"CollectCoverage=true" -p:"Exclude=[xunit.*]*" -p:"CoverletOutputFormat=opencover"'
+      shell: bash
+
+    - run: dotnet sonarscanner end /d:sonar.login="${{ inputs.sonar_token }}"
+      shell: bash
