@@ -29,14 +29,12 @@ To use any of the custom actions in your repository, reference them in your work
 [Squadron Example](https://github.com/SwissLife-OSS/squadron/blob/master/.github/workflows/release.yml)
 
 ```yaml
-- name: Build, Test and Sonar
-  uses: swisslife-oss/actions/release-sonar@main
+- name: Build, Test and Push
+  uses: swisslife-oss/actions/release-packages@main
   with:
     tag: ${{ github.ref_name }}
-    sonar_token: ${{ secrets.SONAR_TOKEN }}
-    sonar_project_key: 'SwissLife-OSS_Squadron'
-    sonar_project_name: "squadron"
-    sonar_exclusions: ${{ vars.SONAR_EXCLUSIONS }}
+    nuget_api_key: ${{ secrets.NUGET_API_KEY }}
+    enable_push: 'yes'
 ```
 
 ```yaml
