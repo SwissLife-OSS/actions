@@ -36,6 +36,12 @@ runs:
       run: sudo apt-get install -y parallel
       shell: bash
 
+    - name: Set JAVA_HOME to version 17
+      run: |
+        echo "JAVA_HOME=$JAVA_HOME_17_X64" >> $GITHUB_ENV
+        echo "Java version: $JAVA_HOME"
+      shell: bash
+
     - name: Restore tools
       run: dotnet tool restore
       shell: bash
