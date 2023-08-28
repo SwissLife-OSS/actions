@@ -57,11 +57,11 @@ runs:
       shell: bash
 
     - name: Build projects
-      run: find . -name '*.sln' | parallel --tag --jobs 0 'dotnet build {} --configuration Debug'
+      run: find . -name '*.sln' | parallel --verbose --jobs 0 'dotnet build {} --configuration Debug'
       shell: bash
 
     - name: Run tests
-      run: find . -name '*.Tests.csproj' | parallel --tag --jobs 0 'dotnet test {} \
+      run: find . -name '*.Tests.csproj' | parallel --verbose --jobs 0 'dotnet test {} \
         --configuration Debug \
         --no-restore \
         --no-build \
