@@ -57,36 +57,18 @@ runs:
       shell: bash
 
     - name: Build projects
-      run: |
-        run() {
-          echo -e "┌──────────────────────────────────────────────"
-          echo -e "│ \033[0;34mRunning: \$@\033[0m"
-          echo -e "└──────────────────────────────────────────────"
-          eval "$*"
-          echo -e "\n"
-        }
-        export -f run
-        find . -name '*.sln' | parallel --jobs 0 'bash -c "run dotnet build {} --configuration Debug"'
+      run: find . -name '*.sln' | parallel --tag --jobs 0 'dotnet build {} --configuration Debug'
       shell: bash
 
     - name: Run tests
-      run: |
-        run() {
-          echo -e "┌──────────────────────────────────────────────"
-          echo -e "│ \033[0;34mRunning: \$@\033[0m"
-          echo -e "└──────────────────────────────────────────────"
-          eval "$*"
-          echo -e "\n"
-        }
-        export -f run
-        find . -name '*.Tests.csproj' | parallel --jobs 0 'bash -c "run dotnet test {} \
-          --configuration Debug \
-          --no-restore \
-          --no-build \
-          --blame \
-          -p:\"CollectCoverage=true\" \
-          -p:\"Exclude=[xunit.*]*\" \
-          -p:\"CoverletOutputFormat=opencover\""'
+      run: find . -name '*.Tests.csproj' | parallel --tag --jobs 0 'dotnet test {} \
+        --configuration Debug \
+        --no-restore \
+        --no-build \
+        --blame \
+        -p:\"CollectCoverage=true\" \
+        -p:\"Exclude=[xunit.*]*\" \
+        -p:\"CoverletOutputFormat=opencover\"'
       shell: bash
 
     - run: dotnet sonarscanner end /d:sonar.login="${{ inputs.sonar_token }}"
