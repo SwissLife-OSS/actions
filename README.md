@@ -8,14 +8,46 @@ To use any of the custom actions in your repository, reference them in your work
 
 ### Pull Request
 
+[Squadron Example](https://github.com/SwissLife-OSS/squadron/blob/master/.github/workflows/pull-request.yml)
+
 ```yaml
-TODO
+- name: Build, Test and Sonar
+  uses: swisslife-oss/actions/pull-request@main
+  with:
+    sonar_token: ${{ secrets.SONAR_TOKEN }}
+    sonar_project_key: 'SwissLife-OSS_Squadron'
+    sonar_project_name: "squadron"
+    pr_number: ${{ github.event.pull_request.number }}
+    pr_source_branch: ${{ github.head_ref }}
+    pr_target_branch: ${{ github.base_ref }}
+    github_repository: ${{ github.repository }}
+    sonar_exclusions: ${{ vars.SONAR_EXCLUSIONS }}
 ```
 
 ### Release
 
+[Squadron Example](https://github.com/SwissLife-OSS/squadron/blob/master/.github/workflows/release.yml)
+
 ```yaml
-TODO
+- name: Build, Test and Sonar
+  uses: swisslife-oss/actions/release-sonar@main
+  with:
+    tag: ${{ github.ref_name }}
+    sonar_token: ${{ secrets.SONAR_TOKEN }}
+    sonar_project_key: 'SwissLife-OSS_Squadron'
+    sonar_project_name: "squadron"
+    sonar_exclusions: ${{ vars.SONAR_EXCLUSIONS }}
+```
+
+```yaml
+- name: Build, Test and Sonar
+  uses: swisslife-oss/actions/release-sonar@main
+  with:
+    tag: ${{ github.ref_name }}
+    sonar_token: ${{ secrets.SONAR_TOKEN }}
+    sonar_project_key: 'SwissLife-OSS_Squadron'
+    sonar_project_name: "squadron"
+    sonar_exclusions: ${{ vars.SONAR_EXCLUSIONS }}
 ```
 
 ## Community
