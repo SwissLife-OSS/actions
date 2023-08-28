@@ -19,11 +19,11 @@ runs:
   steps:
 
     - name: Extract package version
-      run: echo "PACKAGE_VERSION=${{ inputs.ref_name }}" >> $GITHUB_ENV
+      run: echo "PACKAGE_VERSION=${{ inputs.tag }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Extract assembly version
-      run: echo "ASSEMBLY_VERSION=$(echo \"${{ inputs.ref_name }}\" | grep -o '^[0-9]*\.[0-9]*\.[0-9]*').0" >> $GITHUB_ENV
+      run: echo "ASSEMBLY_VERSION=$(echo \"${{ inputs.tag }}\" | grep -o '^[0-9]*\.[0-9]*\.[0-9]*').0" >> $GITHUB_ENV
       shell: bash
 
     - name: Build projects
