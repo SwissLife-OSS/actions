@@ -60,7 +60,7 @@ runs:
       run: |
         for sln in $(find . -name '*.sln'); do
           echo -e "\n\033[0;34mBuilding $sln \033[0m"
-          dotnet build "$sln" -c Debug
+          dotnet build "$sln" -c Debug /p:WarningLevel=0
         done
       shell: bash
 
