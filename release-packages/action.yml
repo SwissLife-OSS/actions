@@ -23,7 +23,7 @@ runs:
       shell: bash
 
     - name: Extract assembly version
-      run: echo "ASSEMBLY_VERSION=$(echo \"${{ inputs.tag }}\" | grep -o '^[0-9]*\.[0-9]*\.[0-9]*').0" >> $GITHUB_ENV
+      run: echo "ASSEMBLY_VERSION=$(echo ${{ inputs.tag }} | grep -o '^[0-9]*\.[0-9]*\.[0-9]*').0" >> $GITHUB_ENV
       shell: bash
 
     - name: Build projects
