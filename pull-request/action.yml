@@ -39,7 +39,6 @@ runs:
     - name: Set JAVA_HOME to version 17
       run: |
         echo "JAVA_HOME=$JAVA_HOME_17_X64" >> $GITHUB_ENV
-        echo "Java version: $JAVA_HOME"
       shell: bash
 
     - name: Restore tools
@@ -63,7 +62,7 @@ runs:
           echo -e "┌──────────────────────────────────────────────"
           echo -e "│ \033[0;34mRunning: \$@\033[0m"
           echo -e "└──────────────────────────────────────────────"
-          eval "\$@"
+          eval "$@"
           echo -e "\n"
         }
         export -f run
@@ -76,7 +75,7 @@ runs:
           echo -e "┌──────────────────────────────────────────────"
           echo -e "│ \033[0;34mRunning: \$@\033[0m"
           echo -e "└──────────────────────────────────────────────"
-          eval "\$@"
+          eval "$@"
           echo -e "\n"
         }
         export -f run
