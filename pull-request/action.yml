@@ -59,13 +59,13 @@ runs:
     - name: Build projects
       run: |
         for sln in $(find . -name '*.sln'); do
-          echo "Building $sln"
+          echo "\n \033[0;34mBuilding $sln \$@\033[0m"
           dotnet build "$sln" --configuration Debug
         done
       shell: bash
 
     - name: Run tests
-      run: find . -name '*.Tests.csproj' | parallel --verbose --jobs 0 'dotnet test {} \
+      run: find . -name '*.Tests.csproj' | parallel --jobs 0 'dotnet test {} \
         --configuration Debug \
         --no-restore \
         --no-build \
