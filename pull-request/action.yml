@@ -57,7 +57,11 @@ runs:
       shell: bash
 
     - name: Build projects
-      run: find . -name '*.sln' | parallel --verbose --jobs 0 'dotnet build {} --configuration Debug'
+      run: |
+        for sln in $(find . -name '*.sln'); do
+          echo "Building $sln"
+          dotnet build "$sln" --configuration Debug
+        done
       shell: bash
 
     - name: Run tests
