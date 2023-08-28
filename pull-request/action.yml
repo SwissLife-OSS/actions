@@ -60,19 +60,12 @@ runs:
       run: |
         for sln in $(find . -name '*.sln'); do
           echo "\n \033[0;34mBuilding $sln \$@\033[0m"
-          dotnet build "$sln" --configuration Debug
+          dotnet build "$sln" -c Debug
         done
       shell: bash
 
     - name: Run tests
-      run: find . -name '*.Tests.csproj' | parallel --jobs 0 'dotnet test {} \
-        --configuration Debug \
-        --no-restore \
-        --no-build \
-        --blame \
-        -p:\"CollectCoverage=true\" \
-        -p:\"Exclude=[xunit.*]*\" \
-        -p:\"CoverletOutputFormat=opencover\"'
+      run: find . -name '*.Tests.csproj' | parallel --jobs 0 'dotnet test {} -c Debug --no-build -p:"CollectCoverage=true" -p:"Exclude=[xunit.*]*" -p:"CoverletOutputFormat=opencover"'
       shell: bash
 
     - run: dotnet sonarscanner end /d:sonar.login="${{ inputs.sonar_token }}"
