@@ -48,7 +48,7 @@ runs:
     - name: SonarScanner Begin
       run: |
         dotnet sonarscanner begin /k:"${{ inputs.sonar_project_key }}" /n:"${{ inputs.sonar_name }}" \
-        /d:sonar.login="${{ inputs.sonar_token }}" /d:sonar.host.url="https://sonarcloud.io" /o:"swisslife" \
+        /d:sonar.login="${{ inputs.sonar_token }}" /d:sonar.host.url="https://sonarcloud.io" /o:"swisslife-oss" \
         /d:sonar.cs.opencover.reportsPaths="**/*.opencover.xml" /d:sonar.cs.vstest.reportsPaths="**/*.trx" \
         /d:sonar.pullrequest.key="${{ inputs.pr_number }}" /d:sonar.pullrequest.branch="${{ inputs.pr_source_branch }}" \
         /d:sonar.pullrequest.base="${{ inputs.pr_target_branch }}" /d:sonar.pullrequest.provider="github" \
