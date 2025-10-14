@@ -35,7 +35,7 @@ runs:
       shell: bash
 
     - name: Pack
-      run: find . -name '*.sln' | parallel --jobs 0 'dotnet pack {} /p:PackageVersion=${{env.PACKAGE_VERSION}} -c Release -o ./out --no-build --include-symbols --include-source --verbosity Minimal'
+      run: find . \( -name '*.sln' -o -name '*.slnx' \) | parallel --jobs 0 'dotnet pack {} /p:PackageVersion=${{env.PACKAGE_VERSION}} -c Release -o ./out --no-build --include-symbols --include-source --verbosity Minimal'
       shell: bash
     
     - name: Push
