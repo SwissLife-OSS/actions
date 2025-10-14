@@ -28,7 +28,7 @@ runs:
 
     - name: Build projects
       run: |
-        for sln in $(find . -name '*.sln'); do
+        for sln in $(find . \( -name '*.sln' -o -name '*.slnx' \)); do
           echo -e "\n\033[0;34mBuilding $sln \033[0m"
           dotnet build "$sln" -c Release /p:Version=${{ env.PACKAGE_VERSION }} /p:AssemblyVersion=${{ env.ASSEMBLY_VERSION }} /p:FileVersion=${{ env.ASSEMBLY_VERSION }}
         done
