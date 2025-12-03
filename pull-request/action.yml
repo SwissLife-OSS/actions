@@ -33,13 +33,12 @@ runs:
   steps:
 
     - name: Install dependencies
+      shell: bash
       run: sudo apt-get install -y parallel
-      shell: bash
 
-    - name: Set JAVA_HOME to version 17
-      run: |
-        echo "JAVA_HOME=$JAVA_HOME_17_X64" >> $GITHUB_ENV
+    - name: Setup Java
       shell: bash
+      run: echo "JAVA_HOME=$JAVA_HOME_21_X64" >> $GITHUB_ENV
 
     - name: Restore tools
       run: dotnet tool restore
@@ -47,13 +46,21 @@ runs:
 
     - name: SonarScanner Begin
       run: |
-        dotnet sonarscanner begin /k:"${{ inputs.sonar_project_key }}" /n:"${{ inputs.sonar_name }}" \
-        /d:sonar.login="${{ inputs.sonar_token }}" /d:sonar.host.url="https://sonarcloud.io" /o:"swisslife-oss" \
-        /d:sonar.cs.opencover.reportsPaths="**/*.opencover.xml" /d:sonar.cs.vstest.reportsPaths="**/*.trx" \
-        /d:sonar.pullrequest.key="${{ inputs.pr_number }}" /d:sonar.pullrequest.branch="${{ inputs.pr_source_branch }}" \
-        /d:sonar.pullrequest.base="${{ inputs.pr_target_branch }}" /d:sonar.pullrequest.provider="github" \
-        /d:sonar.pullrequest.github.repository="${{ inputs.github_repository }}" \
-        /d:sonar.exclusions="${{ inputs.sonar_exclusions }}"
+        dotnet sonarscanner begin \
+          /k:"${{ inputs.sonar_project_key }}" \
+          /n:"${{ inputs.sonar_name }}" \
+          /o:"swisslife-oss" \
+          /d:sonar.login="${{ inputs.sonar_token }}" \
+          /d:sonar.host.url="https://sonarcloud.io" \
+          /d:sonar.cs.opencover.reportsPaths="**/*.opencover.xml" \
+          /d:sonar.cs.vstest.reportsPaths="**/*.trx" \
+          /d:sonar.pullrequest.key="${{ inputs.pr_number }}" \
+          /d:sonar.pullrequest.branch="${{ inputs.pr_source_branch }}" \
+          /d:sonar.pullrequest.base="${{ inputs.pr_target_branch }}" \
+          /d:sonar.pullrequest.provider="github" \
+          /d:sonar.pullrequest.github.repository="${{ inputs.github_repository }}" \
+          /d:sonar.exclusions="${{ inputs.sonar_exclusions }}" \
+          /d:sonar.scanner.javaExePath=${JAVA_HOME}/bin/java
       shell: bash
 
     - name: Build projects
