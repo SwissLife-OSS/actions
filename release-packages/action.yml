@@ -41,5 +41,5 @@ runs:
     - name: Push
       if: ${{ inputs.enable_push == 'yes' }}
       run: |
-        find . -name '*.nupkg' | grep -v '.sources.nupkg' | parallel --jobs 0 'dotnet nuget push {} --api-key ${{ inputs.nuget_api_key }} --source https://api.nuget.org/v3/index.json'
+        find . -name '*.nupkg' | grep -v '.sources.nupkg' | parallel --jobs 0 'dotnet nuget push {} --api-key ${{ inputs.nuget_api_key }} --skip-duplicate --source https://api.nuget.org/v3/index.json'
       shell: bash
